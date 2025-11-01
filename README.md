@@ -121,7 +121,7 @@ After running `setup_initial_data`, you'll have these accounts:
 | Role | Username | Password | Description |
 |------|----------|----------|-------------|
 | SuperAdmin | admin | admin123 | Full system access |
-| Author | author | author123 | Manager role |
+| Author | author | jahed1234 | Manager role |
 | Employer | employer | employer123 | Employee role |
 
 ## 🎨 User Interface
