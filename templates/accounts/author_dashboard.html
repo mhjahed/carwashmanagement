@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Author Dashboard - Car Wash Management{% endblock %}
+
+{% block sidebar %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-chart-line"></i> Today's Stats</h6>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-6">
+                <h5 class="text-primary">{{ total_tickets_today }}</h5>
+                <small class="text-muted">Total Tickets</small>
+            </div>
+            <div class="col-6">
+                <h5 class="text-warning">{{ pending_tickets }}</h5>
+                <small class="text-muted">Pending</small>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center">
+            <h5 class="text-success">{{ completed_tickets }}</h5>
+            <small class="text-muted">Completed</small>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-tools"></i> Quick Actions</h6>
+    </div>
+    <div class="card-body">
+        <div class="d-grid gap-2">
+            <a href="{% url 'carwash:ticket_create' %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-plus"></i> New Ticket
+            </a>
+            <a href="{% url 'carwash:customer_create' %}" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-user-plus"></i> New Customer
+            </a>
+            <a href="{% url 'requests:instruction_list' %}" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-tasks"></i> Manage Instructions
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-user-tie"></i> Author Dashboard</h2>
+            <span class="badge bg-success">{{ user.get_role_display }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Tickets -->
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-ticket-alt"></i> Recent Tickets</h5>
+                <a href="{% url 'carwash:ticket_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_tickets %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Car Number</th>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in recent_tickets %}
+                                <tr>
+                                    <td><strong>{{ ticket.ticket_id }}</strong></td>
+                                    <td>{{ ticket.car_number }}</td>
+                                    <td>{{ ticket.customer.name }}</td>
+                                    <td>{{ ticket.service_type.name }}</td>
+                                    <td>
+                                        {% if ticket.status == 'under_working' %}
+                                            <span class="badge bg-warning">{{ ticket.get_status_display }}</span>
+                                        {% elif ticket.status == 'completed' %}
+                                            <span class="badge bg-success">{{ ticket.get_status_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ ticket.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>৳{{ ticket.total_amount }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">No tickets found</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Employer Requests -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-envelope"></i> Employer Requests</h5>
+                <a href="{% url 'requests:request_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if employer_requests %}
+                    {% for request in employer_requests %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <h6 class="mb-1">{{ request.title }}</h6>
+                        <p class="text-muted small mb-1">{{ request.content|truncatewords:10 }}</p>
+                        <small class="text-muted">{{ request.user.get_full_name }}</small>
+                        <br>
+                        <small class="text-muted">{{ request.created_at|date:"M d, H:i" }}</small>
+                        {% if not request.replies.exists %}
+                            <span class="badge bg-warning ms-2">Needs Reply</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No pending requests</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-primary">{{ total_tickets_today }}</h3>
+                <p class="text-muted mb-0">Tickets Today</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-warning">{{ pending_tickets }}</h3>
+                <p class="text-muted mb-0">Pending</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-success">{{ completed_tickets }}</h3>
+                <p class="text-muted mb-0">Completed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-info">{{ employer_requests|length }}</h3>
+                <p class="text-muted mb-0">Pending Requests</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

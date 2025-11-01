@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Car Wash Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-paper-plane"></i> {{ title }}</h2>
+            <a href="{% url 'requests:request_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Messages
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Request Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">
+                            {% if 'Instruction' in title %}Instruction Title{% else %}Request Title{% endif %} *
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.title.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label">
+                            {% if 'Instruction' in title %}Instruction Details{% else %}Request Details{% endif %} *
+                        </label>
+                        {{ form.content }}
+                        {% if form.content.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.content.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'requests:request_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            {% if 'Instruction' in title %}
+                                <i class="fas fa-plus"></i> Create Instruction
+                            {% else %}
+                                <i class="fas fa-paper-plane"></i> Send Request
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle"></i> Information</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Be clear and specific</li>
+                    <li><i class="fas fa-check text-success"></i> Include relevant details</li>
+                    <li><i class="fas fa-check text-success"></i> Author will reply to your request</li>
+                    <li><i class="fas fa-check text-success"></i> Check back for responses</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

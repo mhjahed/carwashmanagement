@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Attendance - Car Wash Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-calendar-plus"></i> Mark Attendance</h2>
+            <a href="{% url 'attendance:attendance_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Attendance
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Attendance for {{ today|date:"F d, Y" }}</h5>
+            </div>
+            <div class="card-body">
+                {% if existing_attendance %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> You have already marked attendance for today. You can update it below.
+                </div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">Status *</label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.status.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.check_in_time.id_for_label }}" class="form-label">Check In Time</label>
+                            {{ form.check_in_time }}
+                            {% if form.check_in_time.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.check_in_time.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.check_out_time.id_for_label }}" class="form-label">Check Out Time</label>
+                            {{ form.check_out_time }}
+                            {% if form.check_out_time.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.check_out_time.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.notes.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'attendance:attendance_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Attendance
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle"></i> Attendance Guide</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> <strong>Worked:</strong> Full day attendance</li>
+                    <li><i class="fas fa-times text-danger"></i> <strong>Missed:</strong> Absent without leave</li>
+                    <li><i class="fas fa-calendar text-warning"></i> <strong>Leave:</strong> Authorized absence</li>
+                    <li><i class="fas fa-clock text-info"></i> <strong>Half Day:</strong> Partial attendance</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-lightbulb"></i> Tips</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-check text-success"></i> Mark attendance daily</li>
+                    <li><i class="fas fa-check text-success"></i> Include check-in/out times</li>
+                    <li><i class="fas fa-check text-success"></i> Add notes for special cases</li>
+                    <li><i class="fas fa-check text-success"></i> Update if status changes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

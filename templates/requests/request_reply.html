@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Request Details - {{ employer_request.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-comments"></i> Request Details</h2>
+            <a href="{% url 'requests:request_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Messages
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- Original Request -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ employer_request.title }}</h5>
+                <span class="badge bg-warning">Request</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>From:</strong> {{ employer_request.user.get_full_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Date:</strong> {{ employer_request.created_at|date:"M d, Y H:i" }}
+                    </div>
+                </div>
+                <div class="border-top pt-3">
+                    <p>{{ employer_request.content|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Replies -->
+        {% if replies %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-reply"></i> Replies</h5>
+            </div>
+            <div class="card-body">
+                {% for reply in replies %}
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <strong>{{ reply.author.get_full_name }}</strong>
+                            <small class="text-muted">({{ reply.author.get_role_display }})</small>
+                        </div>
+                        <small class="text-muted">{{ reply.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <p class="mb-0">{{ reply.content|linebreaks }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Reply Form -->
+        {% if user.is_author %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-reply"></i> Reply to Request</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label">Your Reply *</label>
+                        {{ form.content }}
+                        {% if form.content.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.content.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'requests:request_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-reply"></i> Send Reply
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle"></i> Request Info</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><strong>From:</strong> {{ employer_request.user.get_full_name }}</li>
+                    <li><strong>Role:</strong> {{ employer_request.user.get_role_display }}</li>
+                    <li><strong>Date:</strong> {{ employer_request.created_at|date:"M d, Y" }}</li>
+                    <li><strong>Time:</strong> {{ employer_request.created_at|time:"H:i" }}</li>
+                    <li><strong>Status:</strong> 
+                        {% if replies %}
+                            <span class="badge bg-success">Replied</span>
+                        {% else %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

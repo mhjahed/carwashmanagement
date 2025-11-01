@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance - Car Wash Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-calendar-check"></i> Attendance</h2>
+            {% if user.is_employer %}
+            <a href="{% url 'attendance:mark_attendance' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Mark Attendance
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Month Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="month" class="form-label">Filter by Month</label>
+                <input type="month" class="form-control" id="month" name="month" 
+                       value="{{ month_filter }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Attendance Records -->
+<div class="card">
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            {% if user.is_author or user.is_superadmin %}
+                            <th>Employee</th>
+                            {% endif %}
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in page_obj %}
+                        <tr>
+                            {% if user.is_author or user.is_superadmin %}
+                            <td>{{ attendance.user.get_full_name }}</td>
+                            {% endif %}
+                            <td>{{ attendance.date|date:"M d, Y" }}</td>
+                            <td>
+                                {% if attendance.status == 'worked' %}
+                                    <span class="badge bg-success">{{ attendance.get_status_display }}</span>
+                                {% elif attendance.status == 'missed' %}
+                                    <span class="badge bg-danger">{{ attendance.get_status_display }}</span>
+                                {% elif attendance.status == 'leave' %}
+                                    <span class="badge bg-warning">{{ attendance.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge bg-info">{{ attendance.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ attendance.check_in_time|default:"N/A" }}</td>
+                            <td>{{ attendance.check_out_time|default:"N/A" }}</td>
+                            <td>{{ attendance.notes|truncatewords:5|default:"N/A" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Attendance pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if month_filter %}&month={{ month_filter }}{% endif %}">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if month_filter %}&month={{ month_filter }}{% endif %}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if month_filter %}&month={{ month_filter }}{% endif %}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if month_filter %}&month={{ month_filter }}{% endif %}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-check fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No attendance records found</h5>
+                {% if user.is_employer %}
+                <p class="text-muted">Mark your first attendance to get started.</p>
+                <a href="{% url 'attendance:mark_attendance' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Mark Attendance
+                </a>
+                {% else %}
+                <p class="text-muted">No attendance records available.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+

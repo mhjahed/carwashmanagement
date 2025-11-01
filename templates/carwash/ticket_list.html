@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Tickets - Car Wash Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-ticket-alt"></i> Tickets</h2>
+            <a href="{% url 'carwash:ticket_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Ticket
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="search" class="form-label">Search</label>
+                <input type="text" class="form-control" id="search" name="search" 
+                       value="{{ current_filters.search }}" placeholder="Ticket ID, Car Number, Customer...">
+            </div>
+            <div class="col-md-2">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="">All Status</option>
+                    <option value="under_working" {% if current_filters.status == 'under_working' %}selected{% endif %}>Under Working</option>
+                    <option value="completed" {% if current_filters.status == 'completed' %}selected{% endif %}>Completed</option>
+                    <option value="cancelled" {% if current_filters.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="payment" class="form-label">Payment</label>
+                <select class="form-control" id="payment" name="payment">
+                    <option value="">All Payment</option>
+                    <option value="due" {% if current_filters.payment == 'due' %}selected{% endif %}>Due</option>
+                    <option value="paid" {% if current_filters.payment == 'paid' %}selected{% endif %}>Paid</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="service" class="form-label">Service Type</label>
+                <select class="form-control" id="service" name="service">
+                    <option value="">All Services</option>
+                    {% for service in service_types %}
+                    <option value="{{ service.id }}" {% if current_filters.service == service.id|stringformat:"s" %}selected{% endif %}>
+                        {{ service.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tickets Table -->
+<div class="card">
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Car Number</th>
+                            <th>Customer</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Amount</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in page_obj %}
+                        <tr>
+                            <td><strong>{{ ticket.ticket_id }}</strong></td>
+                            <td>{{ ticket.car_number }}</td>
+                            <td>
+                                {{ ticket.customer.name }}
+                                {% if ticket.customer.phone %}
+                                    <br><small class="text-muted">{{ ticket.customer.phone }}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.service_type.name }}</td>
+                            <td>
+                                {% if ticket.status == 'under_working' %}
+                                    <span class="badge bg-warning">{{ ticket.get_status_display }}</span>
+                                {% elif ticket.status == 'completed' %}
+                                    <span class="badge bg-success">{{ ticket.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ ticket.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ticket.payment_status == 'paid' %}
+                                    <span class="badge bg-success">{{ ticket.get_payment_status_display }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ ticket.get_payment_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>৳{{ ticket.total_amount }}</td>
+                            <td>{{ ticket.created_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'carwash:ticket_preview' ticket.id %}" class="btn btn-outline-info" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'carwash:ticket_update' ticket.id %}" class="btn btn-outline-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Tickets pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.payment %}&payment={{ current_filters.payment }}{% endif %}{% if current_filters.service %}&service={{ current_filters.service }}{% endif %}">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.payment %}&payment={{ current_filters.payment }}{% endif %}{% if current_filters.service %}&service={{ current_filters.service }}{% endif %}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.payment %}&payment={{ current_filters.payment }}{% endif %}{% if current_filters.service %}&service={{ current_filters.service }}{% endif %}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.payment %}&payment={{ current_filters.payment }}{% endif %}{% if current_filters.service %}&service={{ current_filters.service }}{% endif %}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No tickets found</h5>
+                <p class="text-muted">Create your first ticket to get started.</p>
+                <a href="{% url 'carwash:ticket_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Ticket
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

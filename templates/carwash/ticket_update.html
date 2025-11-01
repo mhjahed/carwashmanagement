@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Ticket - {{ ticket.ticket_id }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-edit"></i> Update Ticket - {{ ticket.ticket_id }}</h2>
+            <div class="btn-group">
+                <a href="{% url 'carwash:ticket_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Tickets
+                </a>
+                <a href="{% url 'carwash:ticket_preview' ticket.id %}" class="btn btn-outline-info">
+                    <i class="fas fa-eye"></i> Preview
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Update Ticket Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Ticket Status -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">Status *</label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.status.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.payment_status.id_for_label }}" class="form-label">Payment Status *</label>
+                            {{ form.payment_status }}
+                            {% if form.payment_status.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.payment_status.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Assignment -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.assigned_to.id_for_label }}" class="form-label">Assign To</label>
+                            {{ form.assigned_to }}
+                            {% if form.assigned_to.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.assigned_to.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.additional_charges.id_for_label }}" class="form-label">Additional Charges</label>
+                            <div class="input-group">
+                                <span class="input-group-text">৳</span>
+                                {{ form.additional_charges }}
+                            </div>
+                            {% if form.additional_charges.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.additional_charges.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'carwash:ticket_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Ticket
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Ticket Summary -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle"></i> Ticket Summary</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><strong>Ticket ID:</strong> {{ ticket.ticket_id }}</li>
+                    <li><strong>Car:</strong> {{ ticket.car_number }}</li>
+                    <li><strong>Customer:</strong> {{ ticket.customer.name }}</li>
+                    <li><strong>Service:</strong> {{ ticket.service_type.name }}</li>
+                    <li><strong>Service Price:</strong> ৳{{ ticket.service_price }}</li>
+                    <li><strong>Total:</strong> ৳{{ ticket.total_amount }}</li>
+                    <li><strong>Created:</strong> {{ ticket.created_at|date:"M d, Y H:i" }}</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Status Information -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-lightbulb"></i> Status Guide</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-clock text-warning"></i> <strong>Under Working:</strong> Service in progress</li>
+                    <li><i class="fas fa-check text-success"></i> <strong>Completed:</strong> Service finished</li>
+                    <li><i class="fas fa-times text-danger"></i> <strong>Cancelled:</strong> Service cancelled</li>
+                    <li><i class="fas fa-money-bill text-success"></i> <strong>Paid:</strong> Payment received</li>
+                    <li><i class="fas fa-exclamation text-warning"></i> <strong>Due:</strong> Payment pending</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

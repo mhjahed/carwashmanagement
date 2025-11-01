@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages - Car Wash Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-envelope"></i> Messages</h2>
+            {% if user.is_employer %}
+            <a href="{% url 'requests:request_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Send Request
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Messages List -->
+<div class="card">
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            {% if user.is_author %}
+                            <th>From</th>
+                            {% endif %}
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in page_obj %}
+                        <tr>
+                            <td>
+                                <strong>{{ request.title }}</strong>
+                                {% if not request.is_read %}
+                                    <span class="badge bg-primary ms-2">New</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if request.is_instruction %}
+                                    <span class="badge bg-info">Instruction</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Request</span>
+                                {% endif %}
+                            </td>
+                            {% if user.is_author %}
+                            <td>{{ request.user.get_full_name }}</td>
+                            {% endif %}
+                            <td>
+                                {% if request.replies.exists %}
+                                    <span class="badge bg-success">Replied</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ request.created_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'requests:request_reply' request.id %}" class="btn btn-outline-primary" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Messages pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-envelope fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No messages found</h5>
+                {% if user.is_employer %}
+                <p class="text-muted">Send your first request to get started.</p>
+                <a href="{% url 'requests:request_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Send Request
+                </a>
+                {% else %}
+                <p class="text-muted">No requests from employees yet.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}SuperAdmin Dashboard - Car Wash Management{% endblock %}
+
+{% block sidebar %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-users"></i> System Stats</h6>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-6">
+                <h5 class="text-primary">{{ total_employers }}</h5>
+                <small class="text-muted">Employers</small>
+            </div>
+            <div class="col-6">
+                <h5 class="text-success">{{ total_authors }}</h5>
+                <small class="text-muted">Authors</small>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center">
+            <h5 class="text-info">{{ total_tickets_today }}</h5>
+            <small class="text-muted">Tickets Today</small>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-cog"></i> Admin Actions</h6>
+    </div>
+    <div class="card-body">
+        <div class="d-grid gap-2">
+            <a href="/admin/" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="fas fa-cog"></i> Django Admin
+            </a>
+            <a href="/admin/carwash/servicetype/" class="btn btn-outline-success btn-sm" target="_blank">
+                <i class="fas fa-tags"></i> Manage Services
+            </a>
+            <a href="/admin/carwash/event/" class="btn btn-outline-info btn-sm" target="_blank">
+                <i class="fas fa-calendar"></i> Manage Events
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-crown"></i> SuperAdmin Dashboard</h2>
+            <span class="badge bg-danger">{{ user.get_role_display }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- System Overview -->
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> System Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>User Statistics</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-user text-primary"></i> Total Users: {{ total_users }}</li>
+                            <li><i class="fas fa-user-tie text-success"></i> Authors: {{ total_authors }}</li>
+                            <li><i class="fas fa-users text-info"></i> Employers: {{ total_employers }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Ticket Statistics</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-ticket-alt text-primary"></i> Total Tickets: {{ total_tickets }}</li>
+                            <li><i class="fas fa-calendar-day text-success"></i> Today's Tickets: {{ total_tickets_today }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Types -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-tags"></i> Service Types</h5>
+                <a href="/admin/carwash/servicetype/" class="btn btn-sm btn-outline-primary" target="_blank">Manage</a>
+            </div>
+            <div class="card-body">
+                {% if service_types %}
+                    {% for service in service_types %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <h6 class="mb-1">{{ service.name }}</h6>
+                        <p class="text-muted small mb-0">৳{{ service.price }}</p>
+                        {% if service.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No service types configured</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats Cards -->
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-primary">{{ total_users }}</h3>
+                <p class="text-muted mb-0">Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-success">{{ total_tickets }}</h3>
+                <p class="text-muted mb-0">Total Tickets</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-info">{{ total_tickets_today }}</h3>
+                <p class="text-muted mb-0">Today's Tickets</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-warning">{{ service_types|length }}</h3>
+                <p class="text-muted mb-0">Service Types</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Links -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-external-link-alt"></i> Admin Panel Links</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <a href="/admin/accounts/user/" class="btn btn-outline-primary btn-sm w-100" target="_blank">
+                            <i class="fas fa-users"></i> Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="/admin/carwash/ticket/" class="btn btn-outline-success btn-sm w-100" target="_blank">
+                            <i class="fas fa-ticket-alt"></i> Manage Tickets
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="/admin/carwash/event/" class="btn btn-outline-info btn-sm w-100" target="_blank">
+                            <i class="fas fa-calendar"></i> Manage Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

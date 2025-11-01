@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Instructions - Car Wash Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-tasks"></i> Manage Instructions</h2>
+            <a href="{% url 'requests:request_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Instruction
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Instructions List -->
+<div class="card">
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>To Employee</th>
+                            <th>Content</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for instruction in page_obj %}
+                        <tr>
+                            <td>
+                                <strong>{{ instruction.title }}</strong>
+                            </td>
+                            <td>{{ instruction.user.get_full_name }}</td>
+                            <td>{{ instruction.content|truncatewords:10 }}</td>
+                            <td>{{ instruction.created_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                {% if instruction.is_read %}
+                                    <span class="badge bg-success">Read</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Unread</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'requests:request_reply' instruction.id %}" class="btn btn-outline-primary" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Instructions pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No instructions created</h5>
+                <p class="text-muted">Create your first instruction for employees.</p>
+                <a href="{% url 'requests:request_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Instruction
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+

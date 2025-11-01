@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Notes - Car Wash Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-sticky-note"></i> Notes</h2>
+            {% if user.is_author or user.is_superadmin %}
+            <a href="{% url 'attendance:note_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Note
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Notes List -->
+<div class="card">
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Content</th>
+                            {% if user.is_author or user.is_superadmin %}
+                            <th>To Employee</th>
+                            {% endif %}
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in page_obj %}
+                        <tr>
+                            <td>
+                                <strong>{{ note.title }}</strong>
+                                {% if note.is_important %}
+                                    <span class="badge bg-danger ms-2">Important</span>
+                                {% endif %}
+                                {% if not note.is_read %}
+                                    <span class="badge bg-primary ms-2">New</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ note.content|truncatewords:15 }}</td>
+                            {% if user.is_author or user.is_superadmin %}
+                            <td>{{ note.employer.get_full_name }}</td>
+                            {% endif %}
+                            <td>{{ note.created_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                {% if note.is_read %}
+                                    <span class="badge bg-success">Read</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Unread</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Notes pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-sticky-note fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No notes found</h5>
+                {% if user.is_employer %}
+                <p class="text-muted">Notes from your manager will appear here.</p>
+                {% else %}
+                <p class="text-muted">Create your first note for employees.</p>
+                <a href="{% url 'attendance:note_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Note
+                </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+

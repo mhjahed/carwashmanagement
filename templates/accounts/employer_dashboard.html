@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Employer Dashboard - Car Wash Management{% endblock %}
+
+{% block sidebar %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-chart-pie"></i> Monthly Progress</h6>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-6">
+                <h5 class="text-success">{{ worked_days }}</h5>
+                <small class="text-muted">Worked Days</small>
+            </div>
+            <div class="col-6">
+                <h5 class="text-danger">{{ missed_days }}</h5>
+                <small class="text-muted">Missed Days</small>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center">
+            <small class="text-muted">Total Days: {{ total_days }}</small>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-tasks"></i> Quick Actions</h6>
+    </div>
+    <div class="card-body">
+        <div class="d-grid gap-2">
+            <a href="{% url 'requests:request_create' %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-plus"></i> Send Request
+            </a>
+            <a href="{% url 'attendance:mark_attendance' %}" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-calendar-check"></i> Mark Attendance
+            </a>
+            <a href="{% url 'requests:request_list' %}" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-envelope"></i> View Messages
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-home"></i> Welcome, {{ user.get_full_name }}!</h2>
+            <span class="badge bg-primary">{{ user.get_role_display }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Instructions from Author -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-clipboard-list"></i> Instructions</h5>
+                <a href="{% url 'requests:instruction_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if instructions %}
+                    {% for instruction in instructions %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <h6 class="mb-1">{{ instruction.title }}</h6>
+                        <p class="text-muted small mb-1">{{ instruction.content|truncatewords:20 }}</p>
+                        <small class="text-muted">{{ instruction.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No instructions available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Requests -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-envelope"></i> Recent Requests</h5>
+                <a href="{% url 'requests:request_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_requests %}
+                    {% for request in recent_requests %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <h6 class="mb-1">{{ request.title }}</h6>
+                        <p class="text-muted small mb-1">{{ request.content|truncatewords:15 }}</p>
+                        <small class="text-muted">{{ request.created_at|date:"M d, Y H:i" }}</small>
+                        {% if request.replies.exists %}
+                            <span class="badge bg-success ms-2">Replied</span>
+                        {% else %}
+                            <span class="badge bg-warning ms-2">Pending</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">No requests sent</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Progress Chart -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Monthly Attendance Progress</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {% widthratio worked_days total_days 100 %}%">
+                                {{ worked_days }} Worked
+                            </div>
+                            <div class="progress-bar bg-danger" role="progressbar" 
+                                 style="width: {% widthratio missed_days total_days 100 %}%">
+                                {{ missed_days }} Missed
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 class="text-primary">{{ total_days }}</h4>
+                        <small class="text-muted">Total Days</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
