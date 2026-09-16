@@ -1,309 +1,121 @@
-# 🚗 Car Wash Management System
+<!-- CAR WASH MANAGEMENT SYSTEM · deep sky #0284c7 on #0d1117 · widgets verified 2026-09-12 -->
 
-A comprehensive Django-based web application for managing car wash operations with role-based access control, attendance tracking, and communication features.
+<div align="center">
 
-## 🌟 Features
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:0d1117,100:0284c7&height=190&section=header&text=CAR%20WASH%20MANAGEMENT&fontSize=52&fontColor=ffffff&animation=fadeIn&fontAlignY=36&desc=roles%20%C2%B7%20tickets%20%C2%B7%20attendance%20%C2%B7%20reports%20%E2%80%94%20django&descSize=17&descAlignY=60" alt="Car Wash Management" />
 
-### 👥 User Roles
-- **SuperAdmin**: Full system access and management
-- **Author**: Manager role with instruction creation and employee oversight
-- **Employer**: Employee role with attendance tracking and request submission
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=19&duration=2600&pause=900&color=38BDF8&center=true&vCenter=true&width=760&height=95&lines=three+roles+%E2%80%94+superadmin+%C2%B7+author+%C2%B7+employer;tickets+%C2%B7+attendance+%C2%B7+requests+%C2%B7+notes;django+%2B+bootstrap+5+%2B+postgres-ready" alt="typing" />
 
-### 🎯 Core Functionality
-- **Dashboard**: Role-specific dashboards with relevant information
-- **Customer Management**: Complete customer database with service history
-- **Service Management**: Multiple service types with pricing
-- **Ticket System**: Service tickets with status tracking
-- **Attendance Tracking**: Daily attendance with time tracking
-- **Communication**: Request/reply system between roles
-- **Instructions**: Author can create instructions for employees
-- **Private Notes**: Secure messaging between Author and Employer
-- **Reports**: Comprehensive reporting system
+<p>
+  <img src="https://img.shields.io/badge/django-backend-0d1117?style=for-the-badge&logo=django&logoColor=44b78b" alt="django" />
+  <img src="https://img.shields.io/badge/postgresql-production-0d1117?style=for-the-badge&logo=postgresql&logoColor=336791" alt="postgres" />
+  <img src="https://img.shields.io/badge/bootstrap-5-0d1117?style=for-the-badge&logo=bootstrap&logoColor=7952b3" alt="bootstrap" />
+  <img src="https://img.shields.io/badge/rbac-3%20roles-0284c7?style=for-the-badge&logoColor=white" alt="rbac" />
+  <img src="https://img.shields.io/badge/timezone-asia%2Fdhaka-0d1117?style=for-the-badge&logoColor=38bdf8" alt="tz" />
+  <img src="https://img.shields.io/badge/license-MIT-0d1117?style=for-the-badge&logoColor=38bdf8" alt="license" />
+</p>
 
-### 🛠️ Technical Features
-- **Responsive Design**: Bootstrap 5 with mobile-friendly interface
-- **Role-Based Access**: Secure access control with decorators
-- **Database**: PostgreSQL (production) / SQLite (development)
-- **Timezone**: Asia/Dhaka timezone support
-- **Security**: CSRF protection, secure authentication
-- **Pagination**: Efficient data loading for large datasets
+</div>
 
-## 🚀 Quick Start
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:0d1117,50:0284c7,100:0d1117&height=3" alt="" />
 
-### Prerequisites
-- Python 3.8+
-- PostgreSQL 12+ (or SQLite for development)
-- Git
+## ▍$ cat overview.txt
 
-### Installation
+A complete operations system for a car wash business — three permission tiers,
+service tickets, daily attendance, and a built-in communication loop between
+management and staff. Role-aware dashboards, paginated lists, and a reporting
+layer on top. Postgres in production, SQLite for a zero-config local spin-up.
 
-1. **Clone the repository**
-```bash
-git clone <your-repository-url>
-cd carwash_management
+```yaml
+domain    : car wash operations
+roles     : superadmin (all) · author (manager) · employer (worker)
+comms     : requests + replies · instructions · private notes
+db        : postgresql (prod) · sqlite (dev)
+tz        : Asia/Dhaka aware
+security  : rbac decorators · csrf · django auth · orm (sqli-safe)
 ```
 
-2. **Create virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or
-venv\Scripts\activate     # Windows
-```
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:0d1117,50:0284c7,100:0d1117&height=3" alt="" />
 
-3. **Install dependencies**
+## ▍$ ls modules/
+
+| MODULE | WHAT IT DOES |
+|---|---|
+| `dashboard` | role-specific home — quick stats, recent activity, relevant nav |
+| `customers` | full customer database with service history |
+| `services` | service catalogue with per-type pricing |
+| `tickets` | service tickets with status pipeline |
+| `attendance` | daily check-in tracking with times |
+| `requests` | employer → author requests, author ↔ employer replies |
+| `instructions` | authored guidance pushed to employees |
+| `notes` | private author → employer messaging |
+| `reports` | operational reporting across the system |
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:0d1117,50:0284c7,100:0d1117&height=3" alt="" />
+
+## ▍$ ./setup
+
 ```bash
+git clone https://github.com/mhjahed/carwashmanagement.git
+cd carwashmanagement
+
+python -m venv venv && source venv/bin/activate   # windows: venv\Scripts\activate
 pip install -r requirements.txt
+
+python manage.py makemigrations && python manage.py migrate
+python manage.py setup_initial_data               # seeds demo accounts
+python manage.py runserver                        # → http://127.0.0.1:8000
 ```
 
-4. **Setup database**
-```bash
-python manage.py makemigrations
-python manage.py migrate
-python manage.py setup_initial_data
-```
+**seeded accounts** *(change in production)*
 
-5. **Run development server**
-```bash
-python manage.py runserver
-```
+| ROLE | USER | PASSWORD | SCOPE |
+|---|---|---|---|
+| superadmin | `admin` | `admin123` | everything |
+| author | `author` | `jahed1234` | instructions, oversight |
+| employer | `employer` | `employer123` | attendance, requests |
 
-6. **Access the application**
-- URL: `http://127.0.0.1:8000`
-- Default login: `admin` / `admin123`
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:0d1117,50:0284c7,100:0d1117&height=3" alt="" />
 
-## 📁 Project Structure
+## ▍$ cat api.http
+
+| METHOD | ROUTE | PURPOSE |
+|---|---|---|
+| POST | `/accounts/login/` · `/accounts/signup/author/` · `/accounts/signup/employer/` | auth |
+| GET/POST | `/carwash/` · `/carwash/create/` | services |
+| GET/POST | `/carwash/customers/` · `/carwash/customers/create/` | customers |
+| GET/POST | `/attendance/` · `/attendance/mark/` | attendance |
+| GET/POST | `/requests/` · `/requests/create/` · `/requests/reply/<id>/` | communication |
+
+## ▍$ tree .
 
 ```
 carwash_management/
-├── accounts/                 # User management and authentication
-│   ├── models.py            # Custom User model with roles
-│   ├── views.py             # Authentication and dashboard views
-│   ├── forms.py             # Login and signup forms
-│   └── urls.py              # Account-related URLs
-├── carwash/                 # Core car wash functionality
-│   ├── models.py            # Customer, Service, Ticket models
-│   ├── views.py             # CRUD operations and business logic
-│   ├── forms.py             # Customer and service forms
-│   └── urls.py              # Car wash URLs
-├── attendance/              # Attendance tracking
-│   ├── models.py            # Attendance and notes models
-│   ├── views.py             # Attendance management
-│   ├── forms.py             # Attendance forms
-│   └── urls.py              # Attendance URLs
-├── requests/                # Communication system
-│   ├── models.py            # Request and reply models
-│   ├── views.py             # Request/reply handling
-│   ├── forms.py             # Request forms
-│   └── urls.py              # Request URLs
-├── reports/                 # Reporting system
-│   └── views.py             # Report generation
-├── templates/               # HTML templates
-│   ├── base.html            # Base template
-│   ├── accounts/            # Authentication templates
-│   ├── carwash/             # Car wash templates
-│   ├── attendance/          # Attendance templates
-│   └── requests/            # Request templates
-├── static/                  # Static files (CSS, JS, images)
-├── media/                   # User uploaded files
-├── requirements.txt         # Python dependencies
-├── manage.py               # Django management script
-└── carwash_management/     # Project settings
-    ├── settings.py         # Development settings
-    ├── urls.py             # Main URL configuration
-    └── wsgi.py             # WSGI configuration
+├── accounts/      custom user + roles · auth · dashboards
+├── carwash/       customers · services · tickets
+├── attendance/    daily attendance + notes
+├── requests/      request / reply pipeline
+├── reports/       report generation
+├── templates/     base + per-app views
+├── static/ · media/
+└── carwash_management/  settings · urls · wsgi
 ```
 
-## 🔐 Default Accounts
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:0d1117,50:0284c7,100:0d1117&height=3" alt="" />
 
-After running `setup_initial_data`, you'll have these accounts:
+## ▍$ systemctl status deploy
 
-| Role | Username | Password | Description |
-|------|----------|----------|-------------|
-| SuperAdmin | admin | admin123 | Full system access |
-| Author | author | jahed1234 | Manager role |
-| Employer | employer | employer123 | Employee role |
+▸ `deploy.sh` — automated Linux/Ubuntu rollout ▸ `WINDOWS_DEPLOYMENT.md` — IIS guide
+▸ `DEPLOYMENT_INSTRUCTIONS.md` — manual path ▸ automated backups — pg_dump + media archive, 7-day retention
+▸ `python manage.py test` — test suite · `coverage` ready
 
-## 🎨 User Interface
+<br/>
 
-### Dashboard Features
-- **Role-specific navigation** with relevant menu items
-- **Quick stats** showing key metrics
-- **Recent activity** with latest updates
-- **Responsive design** that works on all devices
+<div align="center">
 
-### Key Pages
-- **Login/Signup**: Secure authentication with role selection
-- **Customer Management**: Add, edit, and view customer information
-- **Service Tickets**: Create and track service requests
-- **Attendance**: Mark daily attendance with time tracking
-- **Messages**: Communication between Author and Employer
-- **Instructions**: Author can create instructions for employees
-- **Notes**: Private messaging system
+`protections: rbac decorators · csrf · hashed passwords · orm sanitisation · session hygiene`
+`built end-to-end by` **[MH JAHED](https://github.com/mhjahed)** · `mhjahed@proton.me`
 
-## 🛡️ Security Features
+</div>
 
-- **Role-based access control** with decorators
-- **CSRF protection** on all forms
-- **Secure password handling** with Django's built-in system
-- **Session management** with proper logout functionality
-- **Input validation** on all forms
-- **SQL injection protection** through Django ORM
-
-## 📊 Database Models
-
-### Core Models
-- **User**: Extended Django user with role field
-- **Customer**: Customer information and contact details
-- **ServiceType**: Available services with pricing
-- **Ticket**: Service requests with status tracking
-- **EmployerAttendance**: Daily attendance records
-- **EmployerRequest**: Communication between roles
-- **EmployerNote**: Private notes from Author to Employer
-
-## 🔧 Configuration
-
-### Environment Variables
-Copy `env.example` to `.env` and configure:
-- Database settings
-- Secret key
-- Debug mode
-- Email configuration
-- Static files paths
-
-### Timezone
-Default timezone is set to `Asia/Dhaka`. Change in settings if needed.
-
-## 📱 Mobile Support
-
-The application is fully responsive and works on:
-- Desktop computers
-- Tablets
-- Mobile phones
-- All modern browsers
-
-## 🚀 Deployment
-
-### Linux/Ubuntu
-Use the provided `deploy.sh` script for automated deployment:
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-
-### Windows
-Follow the `WINDOWS_DEPLOYMENT.md` guide for IIS deployment.
-
-### Manual Deployment
-See `DEPLOYMENT_INSTRUCTIONS.md` for detailed manual deployment steps.
-
-## 🔍 API Endpoints
-
-### Authentication
-- `POST /accounts/login/` - User login
-- `GET /accounts/logout/` - User logout
-- `POST /accounts/signup/employer/` - Employer registration
-- `POST /accounts/signup/author/` - Author registration
-
-### Car Wash
-- `GET /carwash/` - Service list
-- `POST /carwash/create/` - Create new service
-- `GET /carwash/customers/` - Customer list
-- `POST /carwash/customers/create/` - Add customer
-
-### Attendance
-- `GET /attendance/` - Attendance list
-- `POST /attendance/mark/` - Mark attendance
-
-### Requests
-- `GET /requests/` - Request list
-- `POST /requests/create/` - Create request
-- `POST /requests/reply/<id>/` - Reply to request
-
-## 🧪 Testing
-
-### Run Tests
-```bash
-python manage.py test
-```
-
-### Test Coverage
-```bash
-pip install coverage
-coverage run --source='.' manage.py test
-coverage report
-```
-
-## 📈 Performance
-
-### Optimization Features
-- **Database indexing** on frequently queried fields
-- **Pagination** for large datasets
-- **Static file optimization** with proper caching
-- **Efficient queries** using Django ORM best practices
-
-### Monitoring
-- **Health check endpoint** for monitoring
-- **Logging configuration** for debugging
-- **Error tracking** with detailed error pages
-
-## 🔄 Backup & Recovery
-
-### Automated Backup
-The deployment includes automated backup scripts:
-- **Database backup** (PostgreSQL dump)
-- **Media files backup** (compressed archive)
-- **Retention policy** (keeps 7 days of backups)
-
-### Manual Backup
-```bash
-# Database backup
-pg_dump carwash_db > backup.sql
-
-# Media files backup
-tar -czf media_backup.tar.gz media/
-```
-
-## 🆘 Support & Troubleshooting
-
-### Common Issues
-1. **Permission errors**: Check file permissions and ownership
-2. **Database connection**: Verify database credentials and service status
-3. **Static files**: Run `collectstatic` and check web server configuration
-4. **Template errors**: Verify template paths and syntax
-
-### Log Locations
-- **Application logs**: `/var/log/carwash/` (Linux) or `C:\inetpub\logs\` (Windows)
-- **Web server logs**: `/var/log/nginx/` (Nginx) or IIS logs (Windows)
-- **Database logs**: PostgreSQL or SQL Server logs
-
-### Getting Help
-1. Check the troubleshooting section in deployment guides
-2. Review application logs for error details
-3. Verify configuration settings
-4. Test with default accounts
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📞 Contact
-
-For support or questions:
-- Create an issue in the repository
-- Check the documentation
-- Review the deployment guides
-
----
-
-**🎉 Thank you for using Car Wash Management System!**
-
-Built with ❤️ using Django, Bootstrap, and modern web technologies.
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0284c7,100:0d1117&height=110&section=footer" alt="" />
